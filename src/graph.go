@@ -48,18 +48,59 @@ func (g *Graph) CreateFromFile(fileName string) Graph {
 	return *g
 }
 
+func (g *Graph) CreateRandomSolution() []int {
+	var solution []int
+	var notVisitedNodes []int
 
-func (g *Graph) CreateRandom(size int, name string) Graph {
-	g.Size = size
-	g.Values = make([][]int, g.Size)
-	
-	for index:=0; index<g.Size; index++ {
-		row  := make([]int, g.Size)
-		for index2:=0; index2<g.Size; index2++ {
-			row[index2] = rand.Intn(490) + 10
-		}
-		g.Values[index] = row
+	for i:=1; i<g.Size; i++ {
+		notVisitedNodes = append(notVisitedNodes, i)
 	}
-	
-	return *g
+
+	solution = append(solution, 0)
+
+	for len(notVisitedNodes)!=0 {
+		nodeToAddIndex := rand.Intn(len(notVisitedNodes))
+		solution = append(solution, notVisitedNodes[nodeToAddIndex])
+		notVisitedNodes[nodeToAddIndex] = notVisitedNodes[len(notVisitedNodes)-1]
+		notVisitedNodes = notVisitedNodes[:len(notVisitedNodes)-1]
+	}
+
+	return solution
 }
+
+
+func (g *Graph) GetCycleFromUser() []int {
+	var nodeToAdd int
+	var solution []int
+	var nodes = map[int]bool{}
+
+	for i:=0; i<g.Size; i++ {
+		nodes[i] = false
+	}
+
+	for len(solution) < g.Size {
+		fmt.Println("Enter node to add to cycle:")
+		fmt.Println("Choose one of not visited nodes (false status)")
+		fmt.Println(nodes)
+		fmt.Scan(&nodeToAdd)
+		if !nodes[nodeToAdd] {
+			solution = append(solution, nodeToAdd)
+			nodes[nodeToAdd] = true
+		} else {
+			fmt.Println("This node has been already added to the cycle!")
+		}
+	}
+	return solution
+}
+
+func (g *Graph) TargetFunction(nodes []int) int {
+	var result int
+	last := nodes[0]
+	for _, node := range(nodes[1:]) {
+		result = result + g.Values[node][last]
+		last = node;
+	}
+	result = result + g.Values[nodes[len(nodes)-1]][nodes[0]]
+	return result;
+}
+
