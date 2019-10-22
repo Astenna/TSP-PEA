@@ -13,8 +13,17 @@ func main() {
 	fmt.Println()
 	fmt.Println("Enter path to the file with data: ")
 	fmt.Scan(&fileName)
-	g.CreateFromFile(fileName)
-	// add error handling here
+	fmt.Println()
+	_, err := g.CreateFromFile(fileName)
+	for err != nil {
+		fmt.Println(err)
+		fmt.Println("Enter path to the file with data: ")
+		fmt.Scan(&fileName)
+		_, err = g.CreateFromFile(fileName)
+	}
+	fmt.Println("Loaded graph:")
+	fmt.Println(g)
+	fmt.Println()
 	fmt.Println("Choose a way to test: (enter 'a' or 'b')")
 	fmt.Println("a - enter nodes manually")
 	fmt.Println("b - generate nodes randomly")

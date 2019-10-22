@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"math/rand"
+	"errors"
 )
 
 type Graph struct {
@@ -19,11 +20,11 @@ func (g Graph) String() string {
 	return fmt.Sprintf("Name: %vSize: %v\nValues: %v", g.Name, g.Size, g.Values)
 }
 
-func (g *Graph) CreateFromFile(fileName string) Graph {
+func (g *Graph) CreateFromFile(fileName string) (*Graph, error) {
 	
 	file, err := os.Open(fileName)
 	if err!= nil {
-		fmt.Print(err)
+		return nil,  errors.New("Could not open file!")
 	}
 
 	reader := bufio.NewReader(file)
@@ -45,7 +46,7 @@ func (g *Graph) CreateFromFile(fileName string) Graph {
     }
 
 	defer file.Close()
-	return *g
+	return g, nil
 }
 
 func (g *Graph) CreateRandomSolution() []int {
@@ -56,7 +57,7 @@ func (g *Graph) CreateRandomSolution() []int {
 		notVisitedNodes = append(notVisitedNodes, i)
 	}
 
-	solution = append(solution, 0)
+	solution = append(solution, 0)     
 
 	for len(notVisitedNodes)!=0 {
 		nodeToAddIndex := rand.Intn(len(notVisitedNodes))
@@ -67,7 +68,6 @@ func (g *Graph) CreateRandomSolution() []int {
 
 	return solution
 }
-
 
 func (g *Graph) GetCycleFromUser() []int {
 	var nodeToAdd int
@@ -97,7 +97,7 @@ func (g *Graph) TargetFunction(nodes []int) int {
 	var result int
 	last := nodes[0]
 	for _, node := range(nodes[1:]) {
-		result = result + g.Values[node][last]
+		result = result + g.Values[last][node]
 		last = node;
 	}
 	result = result + g.Values[nodes[len(nodes)-1]][nodes[0]]
