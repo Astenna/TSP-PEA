@@ -1,13 +1,20 @@
 package main
+
 import "fmt"
 
 func main() {
-	var g Graph
-	var fileName string
-	var testChoice string
-	var solution []int
+	var tsp TravellingSalesmanProblem
+	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data11.txt")
+	tsp.Algorithm = BruteForce{}
+	tsp.Resolve()
+	fmt.Println(tsp.Solution)
+	fmt.Println(tsp.MinimumCost)
 
-	fmt.Println()
+	//var fileName string
+	//var testChoice string
+	//var solution []int
+
+	/*fmt.Println()
 	fmt.Println("  PEA - Kinga Marek - 21.10.2019  ")
 	fmt.Println("============ Stage 0. =============")
 	fmt.Println()
@@ -40,6 +47,9 @@ func main() {
 	fmt.Println(solution)
 	fmt.Println("Cost of cycle:")
 	fmt.Println(g.TargetFunction(solution))
-
-	//g.CreateFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data11.txt")
+	g.CreateFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data12.txt")
+	foundCycle := g.SolveUsingBruteForce()
+	fmt.Println(foundCycle)
+	cost := g.TargetFunction(foundCycle)
+	fmt.Println("COST: ", cost)*/
 }
