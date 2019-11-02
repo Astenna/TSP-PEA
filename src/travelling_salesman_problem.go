@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // TspAlgorithm defines a way to solve travelling salesman problem
@@ -21,6 +22,7 @@ type TravellingSalesmanProblem struct {
 	AdjacencyMatrix [][]int
 	Solution        []int
 	MinimumCost     int
+	CalculationTime time.Duration
 	Algorithm       TspAlgorithm
 }
 
@@ -59,7 +61,10 @@ func (t *TravellingSalesmanProblem) LoadDataFromFile(fileName string) ([][]int, 
 
 // Resolve is defined to solve the TSP using the given algorithm
 func (t *TravellingSalesmanProblem) Resolve() {
+	startTime := time.Now()
 	t.Solution = t.Algorithm.Resolve(t.AdjacencyMatrix)
+	endTime := time.Now()
+	t.CalculationTime = endTime.Sub(startTime)
 	t.MinimumCost = t.CalculateCost(t.Solution)
 }
 

@@ -4,12 +4,12 @@ import "fmt"
 
 func main() {
 	var tsp TravellingSalesmanProblem
-	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data11.txt")
+	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data10.txt")
 	tsp.Algorithm = BruteForce{}
 	tsp.Resolve()
 	fmt.Println(tsp.Solution)
 	fmt.Println(tsp.MinimumCost)
-
+	fmt.Println(tsp.CalculationTime)
 	//var fileName string
 	//var testChoice string
 	//var solution []int
