@@ -5,7 +5,7 @@ import "fmt"
 func main() {
 	var tsp TravellingSalesmanProblem
 	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data10.txt")
-	tsp.Algorithm = BruteForce{}
+	tsp.Algorithm = HeldKarp{}
 	tsp.Resolve()
 	fmt.Println(tsp.Solution)
 	fmt.Println(tsp.MinimumCost)

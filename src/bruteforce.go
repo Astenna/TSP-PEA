@@ -38,28 +38,14 @@ func (b *BruteForce) FindAllCycles(path []int, notVisitedNodes []int) [][]int {
 
 	if len(notVisitedNodes) > 0 {
 		for index, node := range notVisitedNodes {
-
-			/*notVisitedNodesModified := make([]int, len(notVisitedNodes))
-			copy(notVisitedNodesModified, notVisitedNodes)
-
-			notVisitedNodesModified[index] = notVisitedNodesModified[len(notVisitedNodes)-1]
-			notVisitedNodesModified = notVisitedNodesModified[:len(notVisitedNodes)-1]*/
-			b.Swap(notVisitedNodes, index)
+			SwapLastAndIndex(notVisitedNodes, index)
 			cycles = append(cycles, b.FindAllCycles(append(path, node), notVisitedNodes[:len(notVisitedNodes)-1])...)
-			b.Swap(notVisitedNodes, index)
+			SwapLastAndIndex(notVisitedNodes, index)
 		}
 	} else {
 		return append(cycles, path)
 	}
 	return cycles
-}
-
-func (b *BruteForce) Swap(path []int, index int) {
-	if len(path) > 0 {
-		replaced := path[len(path)-1]
-		path[len(path)-1] = path[index]
-		path[index] = replaced
-	}
 }
 
 // TargetFunction returns total cost of given path in given adjacencyMatrix
