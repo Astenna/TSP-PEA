@@ -1,83 +1,106 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
-type Pair struct {
-	cost           int
-	lastSubpathKey int
+// STARTING_NODE defines a node to start
+// the evaluation on HeldKarp algorithm
+const (
+	STARTING_NODE = 0
+)
+
+// PartialSolution defines value stored in partialSolutions
+// map of HeldKarp algorithm
+type PartialSolution struct {
+	cost     int
+	lastNode int
 }
 
+// Key defines identifier for PartialSolution
+// in partialSolutions map of HeldKarp algorithm
+type Key struct {
+	lastNode     int
+	visitedNodes int
+}
+
+// HeldKarp defines data structure crucial
+// for resolving TSP with Held-Karp algorithm
 type HeldKarp struct {
 	adjacencyMatrix  [][]int
-	partialSolutions map[int]Pair
+	partialSolutions map[Key]PartialSolution
 	startingNode     int
 }
 
-// Resolve defines a main method of
+// Resolve defines a main method that is the entry point
+// for the Held Karp algorithm evaluation
 func (h HeldKarp) Resolve(adjacencyMatrix [][]int) []int {
 	h.adjacencyMatrix = adjacencyMatrix
-	h.startingNode = 1
+	h.startingNode = STARTING_NODE
+	h.partialSolutions = make(map[Key]PartialSolution)
+
 	var nodes []int
-	for i := 2; i < len(h.adjacencyMatrix[0])-2; i++ {
+	for i := 1; i < len(h.adjacencyMatrix[0]); i++ {
 		nodes = append(nodes, i)
 	}
-	solution := h.CalculatePaths(1, nodes, h.startingNode)
-	fmt.Println(solution.cost)
-	return h.BacktrackOptimalPath(solution)
+
+	solution := h.calculatePaths(h.startingNode, nodes, Key{h.startingNode, 1})
+	return h.backtrackOptimalPath(solution.lastNode)
 }
 
-func (h HeldKarp) CalculatePaths(destination int, notVisited []int, lastKey int) Pair {
+//
+func (h *HeldKarp) calculatePaths(destination int, nodesToVisit []int, lastSolutionKey Key) PartialSolution {
 
-	fmt.Println("Call destination: ", destination, "not visited: ", notVisited)
+	if len(nodesToVisit) <= 0 {
+		var newPartialSolution PartialSolution
+		newPartialSolution.cost = h.adjacencyMatrix[destination][h.startingNode]
+		newPartialSolution.lastNode = destination
 
-	if len(notVisited) <= 0 {
-		var newPair Pair
-		newPair.cost = h.adjacencyMatrix[h.startingNode][destination]
-		newPair.lastSubpathKey = setBit(lastKey, destination)
-		return newPair
-	} else {
-		currentBestSolution := Pair{math.MaxInt64, lastKey}
+		return newPartialSolution
+	}
 
-		for index, node := range notVisited {
-			keyWithNewNode := setBit(lastKey, node)
-			solution, keyExists := h.partialSolutions[keyWithNewNode]
+	currentBestSolution := PartialSolution{math.MaxInt64, destination}
+	iterationSolution := PartialSolution{}
 
-			if !keyExists {
-				SwapLastAndIndex(notVisited, index)
-				solution = h.CalculatePaths(node, notVisited[:len(notVisited)-1], keyWithNewNode)
-				SwapLastAndIndex(notVisited, index)
-			}
+	for index, node := range nodesToVisit {
+		keyWithNewNode := Key{node, setBit(lastSolutionKey.visitedNodes, node)}
+		partialSolution, keyExists := h.partialSolutions[keyWithNewNode]
 
-			solution.cost = solution.cost + h.adjacencyMatrix[destination][node]
-			solution.lastSubpathKey = keyWithNewNode
-			fmt.Println("From notVisited ", notVisited, " chosen ", node, " cost ", solution.cost)
-			if solution.cost < currentBestSolution.cost {
-				currentBestSolution = solution
+		if !keyExists {
+			SwapLastAndIndex(nodesToVisit, index)
+			partialSolution = h.calculatePaths(node, nodesToVisit[:len(nodesToVisit)-1], keyWithNewNode)
+			SwapLastAndIndex(nodesToVisit, index)
+			if len(nodesToVisit) > 1 {
+				h.partialSolutions[keyWithNewNode] = partialSolution
 			}
 		}
-		return currentBestSolution
+		iterationSolution.cost = partialSolution.cost + h.adjacencyMatrix[destination][node]
+		iterationSolution.lastNode = node
+
+		if iterationSolution.cost < currentBestSolution.cost {
+			currentBestSolution = iterationSolution
+		}
 	}
+
+	return currentBestSolution
 }
 
-func (h HeldKarp) BacktrackOptimalPath(solution Pair) []int {
-	var optimumPath []int
-	optimumPath = append(optimumPath, h.startingNode)
-	lastKey := h.startingNode
-	solutionExists := true
+func (h *HeldKarp) backtrackOptimalPath(lastNode int) []int {
+	var optimalPath []int
+	optimalPath = append(optimalPath, h.startingNode)
+	optimalPath = append(optimalPath, lastNode)
+	lastVisitedNodesKey := setBit(1, lastNode)
+	lastKey := Key{lastNode, lastVisitedNodesKey}
+	partialSolution := h.partialSolutions[lastKey]
 
-	for solutionExists {
-		// XOR
-		diff := solution.lastSubpathKey - lastKey
-		node := int(math.Log2(float64(diff)))
-		optimumPath = append(optimumPath, node)
-		lastKey = solution.lastSubpathKey
-		solution, solutionExists = h.partialSolutions[solution.lastSubpathKey]
+	for len(optimalPath) < len(h.adjacencyMatrix[0]) {
+		optimalPath = append(optimalPath, partialSolution.lastNode)
+		lastVisitedNodesKey = setBit(lastVisitedNodesKey, partialSolution.lastNode)
+		lastKey := Key{partialSolution.lastNode, lastVisitedNodesKey}
+		partialSolution = h.partialSolutions[lastKey]
 	}
 
-	return optimumPath
+	return optimalPath
 }
 
 func clearBit(n int, pos int) int {
