@@ -4,8 +4,8 @@ import "fmt"
 
 func main() {
 	var tsp TravellingSalesmanProblem
-	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data13.txt")
-	tsp.Algorithm = HeldKarp{}
+	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data10.txt")
+	tsp.Algorithm = BranchAndBound{}
 	tsp.Resolve()
 	fmt.Println(tsp.Solution)
 	fmt.Println(tsp.MinimumCost)
