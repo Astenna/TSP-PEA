@@ -44,22 +44,22 @@ func (h HeldKarp) Resolve(adjacencyMatrix [][]int) []int {
 		nodes = append(nodes, i)
 	}
 
-	solution := h.calculatePaths(h.startingNode, nodes, Key{h.startingNode, 1})
+	solution := h.calculatePaths(nodes, Key{h.startingNode, 1})
 	return h.backtrackOptimalPath(solution.lastNode)
 }
 
 //
-func (h *HeldKarp) calculatePaths(destination int, nodesToVisit []int, lastSolutionKey Key) PartialSolution {
+func (h *HeldKarp) calculatePaths(nodesToVisit []int, lastSolutionKey Key) PartialSolution {
 
 	if len(nodesToVisit) <= 0 {
 		var newPartialSolution PartialSolution
-		newPartialSolution.cost = h.adjacencyMatrix[destination][h.startingNode]
-		newPartialSolution.lastNode = destination
+		newPartialSolution.cost = h.adjacencyMatrix[lastSolutionKey.lastNode][h.startingNode]
+		newPartialSolution.lastNode = lastSolutionKey.lastNode
 
 		return newPartialSolution
 	}
 
-	currentBestSolution := PartialSolution{math.MaxInt64, destination}
+	currentBestSolution := PartialSolution{math.MaxInt64, lastSolutionKey.lastNode}
 	iterationSolution := PartialSolution{}
 
 	for index, node := range nodesToVisit {
@@ -68,13 +68,13 @@ func (h *HeldKarp) calculatePaths(destination int, nodesToVisit []int, lastSolut
 
 		if !keyExists {
 			SwapLastAndIndex(nodesToVisit, index)
-			partialSolution = h.calculatePaths(node, nodesToVisit[:len(nodesToVisit)-1], keyWithNewNode)
+			partialSolution = h.calculatePaths(nodesToVisit[:len(nodesToVisit)-1], keyWithNewNode)
 			SwapLastAndIndex(nodesToVisit, index)
 			if len(nodesToVisit) > 1 {
 				h.partialSolutions[keyWithNewNode] = partialSolution
 			}
 		}
-		iterationSolution.cost = partialSolution.cost + h.adjacencyMatrix[destination][node]
+		iterationSolution.cost = partialSolution.cost + h.adjacencyMatrix[lastSolutionKey.lastNode][node]
 		iterationSolution.lastNode = node
 
 		if iterationSolution.cost < currentBestSolution.cost {
