@@ -1,55 +1,39 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+)
 
 func main() {
 	var tsp TravellingSalesmanProblem
-	tsp.LoadDataFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data10.txt")
-	tsp.Algorithm = BranchAndBound{}
-	tsp.Resolve()
-	fmt.Println(tsp.Solution)
-	fmt.Println(tsp.MinimumCost)
-	fmt.Println(tsp.CalculationTime)
-	//var fileName string
-	//var testChoice string
-	//var solution []int
+	dataSizes := []string{"4", "10", "11", "12", "13", "14", "15", "16", "17", "18", "21"}
+	algorithms := []TspAlgorithm{HeldKarp{}, BranchAndBound{}, BruteForce{}}
+	algorithmNames := []string{"HeldKarp", "BranchAndBound", "BruteForce"}
+	csvExtension := ".csv"
+	pathToDirectory := "C:\\Users\\KM\\Downloads\\PEA\\SMALL\\"
+	baseName := "data"
+	extenstion := ".txt"
 
-	/*fmt.Println()
-	fmt.Println("  PEA - Kinga Marek - 21.10.2019  ")
-	fmt.Println("============ Stage 0. =============")
-	fmt.Println()
-	fmt.Println("Enter path to the file with data: ")
-	fmt.Scan(&fileName)
-	fmt.Println()
-	_, err := g.CreateFromFile(fileName)
-	for err != nil {
-		fmt.Println(err)
-		fmt.Println("Enter path to the file with data: ")
-		fmt.Scan(&fileName)
-		_, err = g.CreateFromFile(fileName)
+	for index, algorithm := range algorithms {
+		tsp.Algorithm = algorithm
+		file, err := os.Create(algorithmNames[index] + csvExtension)
+		if err != nil {
+			log.Fatalf("failed creating file: %s", err)
+		}
+		fmt.Println("============================= " + algorithmNames[index] + " =============================")
+		for _, size := range dataSizes {
+			fullPath := pathToDirectory + baseName + size + extenstion
+			tsp.LoadDataFromFile(fullPath)
+			tsp.Resolve()
+			file.WriteString(size + ";" + tsp.CalculationTime.String() + "\n")
+			fmt.Println(fullPath)
+			fmt.Println(tsp.Solution)
+			fmt.Println(tsp.MinimumCost)
+			fmt.Println(tsp.CalculationTime)
+		}
+
+		file.Close()
 	}
-	fmt.Println("Loaded graph:")
-	fmt.Println(g)
-	fmt.Println()
-	fmt.Println("Choose a way to test: (enter 'a' or 'b')")
-	fmt.Println("a - enter nodes manually")
-	fmt.Println("b - generate nodes randomly")
-	fmt.Scan(&testChoice)
-	for (testChoice != "a" && testChoice != "b") {
-		fmt.Scan(&testChoice)
-	}
-	if testChoice == "a" {
-		solution = g.GetCycleFromUser()
-	} else {
-		solution = g.CreateRandomSolution()
-	}
-	fmt.Println("Entered cycle:")
-	fmt.Println(solution)
-	fmt.Println("Cost of cycle:")
-	fmt.Println(g.TargetFunction(solution))
-	g.CreateFromFile("C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data12.txt")
-	foundCycle := g.SolveUsingBruteForce()
-	fmt.Println(foundCycle)
-	cost := g.TargetFunction(foundCycle)
-	fmt.Println("COST: ", cost)*/
 }
