@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 			fullPath := pathToDirectory + baseName + size + extenstion
 			tsp.LoadDataFromFile(fullPath)
 			tsp.Resolve()
-			file.WriteString(size + ";" + tsp.CalculationTime.String() + "\n")
+			file.WriteString(size + ";" + strconv.FormatInt(tsp.CalculationTime.Microseconds(), 10) + "\n")
 			fmt.Println(fullPath)
 			fmt.Println(tsp.Solution)
 			fmt.Println(tsp.MinimumCost)

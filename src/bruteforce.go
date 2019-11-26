@@ -1,61 +1,57 @@
 package main
 
-import (
-	"math"
-)
+import "math"
 
 // BruteForce defines solution for TSP
 type BruteForce struct {
+	minimumCost     int
+	bestPath        []int
+	adjacencyMatrix [][]int
 }
 
 // Resolve defines a main method of
 func (b BruteForce) Resolve(adjacencyMatrix [][]int) []int {
 	var notVisitedNodes []int
-	var solution []int
+	b.minimumCost = math.MaxInt64
+	b.adjacencyMatrix = adjacencyMatrix
 
 	for i := 0; i < len(adjacencyMatrix); i++ {
 		notVisitedNodes = append(notVisitedNodes, i)
 	}
 
-	allCycles := b.FindAllCycles(make([]int, 0), notVisitedNodes)
-	min := math.MaxInt64
-
-	for _, cycle := range allCycles {
-		currentCost := b.TargetFunction(cycle, adjacencyMatrix)
-		if currentCost < min {
-			min = currentCost
-			solution = cycle
-		}
-	}
-
-	return solution
+	b.FindAllCycles(make([]int, 0), notVisitedNodes)
+	return b.bestPath
 }
 
 // FindAllCycles is a recursive function that finds all cycles in graph using search tree
-func (b *BruteForce) FindAllCycles(path []int, notVisitedNodes []int) [][]int {
-
-	var cycles [][]int
+func (b *BruteForce) FindAllCycles(path []int, notVisitedNodes []int) {
 
 	if len(notVisitedNodes) > 0 {
 		for index, node := range notVisitedNodes {
 			SwapLastAndIndex(notVisitedNodes, index)
-			cycles = append(cycles, b.FindAllCycles(append(path, node), notVisitedNodes[:len(notVisitedNodes)-1])...)
+			b.FindAllCycles(append(path, node), notVisitedNodes[:len(notVisitedNodes)-1])
 			SwapLastAndIndex(notVisitedNodes, index)
 		}
 	} else {
-		return append(cycles, path)
+		cost := b.TargetFunction(path)
+		if cost < b.minimumCost {
+			b.bestPath = make([]int, len(path))
+			copy(b.bestPath, path)
+			b.minimumCost = cost
+		}
 	}
-	return cycles
 }
 
 // TargetFunction returns total cost of given path in given adjacencyMatrix
-func (b *BruteForce) TargetFunction(nodes []int, adjacencyMatrix [][]int) int {
+func (b *BruteForce) TargetFunction(nodes []int) int {
+
 	var result int
 	last := nodes[0]
 	for _, node := range nodes[1:] {
-		result = result + adjacencyMatrix[last][node]
+		result = result + b.adjacencyMatrix[last][node]
 		last = node
 	}
-	result = result + adjacencyMatrix[nodes[len(nodes)-1]][nodes[0]]
+
+	result = result + b.adjacencyMatrix[nodes[len(nodes)-1]][nodes[0]]
 	return result
 }
