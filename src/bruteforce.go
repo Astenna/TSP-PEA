@@ -19,17 +19,17 @@ func (b BruteForce) Resolve(adjacencyMatrix [][]int) []int {
 		notVisitedNodes = append(notVisitedNodes, i)
 	}
 
-	b.FindAllCycles(make([]int, 0), notVisitedNodes)
+	b.FindBestPathRecursively(make([]int, 0), notVisitedNodes)
 	return b.bestPath
 }
 
-// FindAllCycles is a recursive function that finds all cycles in graph using search tree
-func (b *BruteForce) FindAllCycles(path []int, notVisitedNodes []int) {
+// FindBestPathRecursively is a recursive function that finds all cycles in graph using search tree
+func (b *BruteForce) FindBestPathRecursively(path []int, notVisitedNodes []int) {
 
 	if len(notVisitedNodes) > 0 {
 		for index, node := range notVisitedNodes {
 			SwapLastAndIndex(notVisitedNodes, index)
-			b.FindAllCycles(append(path, node), notVisitedNodes[:len(notVisitedNodes)-1])
+			b.FindBestPathRecursively(append(path, node), notVisitedNodes[:len(notVisitedNodes)-1])
 			SwapLastAndIndex(notVisitedNodes, index)
 		}
 	} else {
