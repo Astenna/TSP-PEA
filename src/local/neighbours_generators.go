@@ -15,8 +15,6 @@ type Swap struct {
 func (s Swap) GetSolutionFromNeighbourhood(solution []int) []int {
 	index1 := rand.Intn(len(solution))
 	index2 := rand.Intn(len(solution))
-	//fmt.Println(solution)
-	//fmt.Println("Swap on ", index1, " and ", index2)
 	slice.SwapOnIndexes(solution, index1, index2)
 	return solution
 }

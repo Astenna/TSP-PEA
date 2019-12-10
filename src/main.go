@@ -13,14 +13,15 @@ import (
 func main() {
 
 	annealing := local.SimulatedAnnealing{}
-	annealing.AnnealingSchedule = local.GeometricAnnealing{(0.999995)}
-	annealing.InitialTemperature = 900
+	annealing.AnnealingSchedule = local.GeometricAnnealing{(0.999999)}
+	annealing.InitialTemperature = 1000
 	annealing.MaxCalculationTime = time.Second * 120 * 3
 	annealing.NeighboursGenerator = local.Swap{}
 
-	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data358.txt"
+	path := "C:\\Users\\KM\\Downloads\\PEA\\TSP\\TSP\\data17.txt"
 	annealing.LoadDataFromFile(path)
-	time := annealing.Resolve()
+	//time := annealing.Resolve()
+	time := annealing.ResolveListBased(100000)
 	fmt.Println(annealing.GetSolution())
 	fmt.Println(annealing. GetSolutionCost())
 	fmt.Println(time)
