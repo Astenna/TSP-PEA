@@ -3,16 +3,22 @@ package main
 import (
 	"exact"
 	"fmt"
+	"local"
 	"log"
 	"os"
 	"strconv"
-	"local"
-	"time"
 )
 
 func main() {
 
-	annealing := local.SimulatedAnnealing{}
+	path := "C:\\Users\\KM\\Downloads\\PEA\\TSP\\TSP\\data17.txt"
+	adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path)
+	lbAnnealing := local.ListBasedSimulatedAnnealing{AdjacencyMatrix: adjacencyMatrix}
+	lbAnnealing.NeighboursGenerator = local.MultipleMove{adjacencyMatrix}
+	solution, _ := lbAnnealing.Resolve(10000)
+	fmt.Println(local.CalculateCost(solution, adjacencyMatrix))
+
+	/*annealing := local.SimulatedAnnealing{}
 	annealing.AnnealingSchedule = local.GeometricAnnealing{(0.999999)}
 	annealing.InitialTemperature = 1000
 	annealing.MaxCalculationTime = time.Second * 120 * 3
@@ -24,7 +30,7 @@ func main() {
 	time := annealing.ResolveListBased(100000)
 	fmt.Println(annealing.GetSolution())
 	fmt.Println(annealing. GetSolutionCost())
-	fmt.Println(time)
+	fmt.Println(time)*/
 }
 
 func TestExactAlgorithms() {

@@ -81,7 +81,7 @@ func (s *SimulatedAnnealing) anneal() {
 	//temp
 	copy(currentSolution, s.solution)
 	for step := 0; s.MaxCalculationTime > time.Now().Sub(startTime) && currentTemperature > s.FinalTemperature; step++ {
-		currentSolution = s.NeighboursGenerator.GetSolutionFromNeighbourhood(currentSolution)
+		//currentSolution = s.NeighboursGenerator.GetSolutionFromNeighbourhood(currentSolution)
 		currentSolutionCost = CalculateCost(currentSolution, s.adjacencyMatrix)
 		fmt.Println("New solution: ", currentSolution)
 		fmt.Println("CurrentCost ", currentSolutionCost, " current Best cost ", bestPathCost)
@@ -184,7 +184,7 @@ func (s *SimulatedAnnealing) annealListBased(steps int) {
 		t:=0.0
 		currentTemperature = s.getMaxTemperature(temperaturesList)
 		for m := 0; m < maxM; m++ {
-			currentSolution = s.NeighboursGenerator.GetSolutionFromNeighbourhood(currentSolution)
+			//currentSolution = s.NeighboursGenerator.GetSolutionFromNeighbourhood(currentSolution)
 			currentSolutionCost = CalculateCost(currentSolution, s.adjacencyMatrix)
 			fmt.Println("New solution: ", currentSolution)
 			fmt.Println("CurrentCost ", currentSolutionCost, " current Best cost ", bestPathCost)
@@ -229,7 +229,7 @@ func (s SimulatedAnnealing)initializeTemperatureList(solution []int) []float64{
 	bestPathCost := CalculateCost(solution, s.adjacencyMatrix)
 
 	for len(temperatureList) < maxLength {
-		currentSolution = s.NeighboursGenerator.GetSolutionFromNeighbourhood(solution)
+		//currentSolution = s.NeighboursGenerator.GetSolutionFromNeighbourhood(solution)
 		currentSolutionCost = CalculateCost(currentSolution, s.adjacencyMatrix)
 
 		if bestPathCost > currentSolutionCost {
