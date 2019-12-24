@@ -10,27 +10,36 @@ import (
 )
 
 func main() {
+	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data"
+	dataSizes := []string{"17", "34", "36", "39", "43", "45", "48", "53","56","65","70","71","100","171","323","358","403","443"}
+	file, err := os.Create("results.csv")
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
 
-	path := "C:\\Users\\KM\\Downloads\\PEA\\TSP\\TSP\\data17.txt"
-	adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path)
-	lbAnnealing := local.ListBasedSimulatedAnnealing{AdjacencyMatrix: adjacencyMatrix}
-	lbAnnealing.NeighboursGenerator = local.MultipleMove{adjacencyMatrix}
-	solution, _ := lbAnnealing.Resolve(10000)
-	fmt.Println(local.CalculateCost(solution, adjacencyMatrix))
+	for _, size := range dataSizes {
+		file.WriteString(size + "\n")
+		adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path + size + ".txt")
 
-	/*annealing := local.SimulatedAnnealing{}
-	annealing.AnnealingSchedule = local.GeometricAnnealing{(0.999999)}
-	annealing.InitialTemperature = 1000
-	annealing.MaxCalculationTime = time.Second * 120 * 3
-	annealing.NeighboursGenerator = local.Swap{}
+		lbAnnealing := local.ListBasedSimulatedAnnealing{AdjacencyMatrix: adjacencyMatrix}
+		lbAnnealing.NeighboursGenerator = local.MultipleMove{adjacencyMatrix}
 
-	path := "C:\\Users\\KM\\Downloads\\PEA\\TSP\\TSP\\data17.txt"
-	annealing.LoadDataFromFile(path)
-	//time := annealing.Resolve()
-	time := annealing.ResolveListBased(100000)
-	fmt.Println(annealing.GetSolution())
-	fmt.Println(annealing. GetSolutionCost())
-	fmt.Println(time)*/
+		simpleAnnealing := local.SimulatedAnnealing{AdjacencyMatrix: adjacencyMatrix}
+		simpleAnnealing.NeighboursGenerator = local.MultipleMove{adjacencyMatrix}
+
+
+
+		/* initial temperature tests */
+		temperatures := []float64{100.0, 400.0, 700.0, 1000.0, 1300.0, 1600.0, 2000.0}
+		for _, temperature := range temperatures {
+			sum := 0
+			for i:=0; i<100; i++ {
+				solution2, _ := simpleAnnealing.Resolve(10000, 0.999, temperature)
+				sum += local.CalculateCost(solution2, adjacencyMatrix)
+			}
+			file.WriteString(size+";0.999;"+fmt.Sprintf("%f", temperature) + ";" + strconv.Itoa(sum/100) + "\n")
+		}
+	}
 }
 
 func TestExactAlgorithms() {

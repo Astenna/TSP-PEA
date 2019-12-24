@@ -2,7 +2,6 @@ package local
 
 import (
 	"errors"
-	"fmt"
 	queue "github.com/jupp0r/go-priority-queue"
 	"math"
 	"math/rand"
@@ -12,6 +11,8 @@ import (
 type ListBasedSimulatedAnnealing struct {
 	AdjacencyMatrix [][]int
 	NeighboursGenerator      NeighboursGenerator
+	RepeatTemperature int
+	ListLength int
 	minimumCost		int
 	bestPath		[]int
 	size int
@@ -27,19 +28,20 @@ func (l ListBasedSimulatedAnnealing) GetBestPath() []int {
 }
 
 func (l *ListBasedSimulatedAnnealing) Resolve(steps int) ([]int, error){
-	repeatTemperature := 200
+	if l.RepeatTemperature == 0 {
+		l.RepeatTemperature = 300
+	}
 
 	if l.AdjacencyMatrix == nil {
 		return []int{}, errors.New("Adjacency Matrix not found! Initialize struct first!")
 	}
-
 
 	l.size = len(l.AdjacencyMatrix[0])
 	solution := l.createInitialSolution()
 	currentBestSolution := solution
 	currentBestCost := CalculateCost(solution, l.AdjacencyMatrix)
 	temperatures := l.setInitialTemperatureList(solution)
-	var floatInterface interface{}
+
 	var currentTemperature float64
 	var random float64
 	var probability float64
@@ -51,42 +53,53 @@ func (l *ListBasedSimulatedAnnealing) Resolve(steps int) ([]int, error){
 	for k := 0; k<steps && temperatures.Len() > 0; k++ {
 		temperaturesSum = 0.0
 		acceptedWorseSolutionCount = 0
-		floatInterface,_ = temperatures.Pop()
-		reflected := reflect.ValueOf(floatInterface)
-		if reflected.IsValid() {
-			currentTemperature = float64(reflected.Float())
-		}
+		currentTemperature,_ = l.popMaxTemperature(temperatures)
 
-		for m := 0; m<repeatTemperature; m++ {
-			index1 := rand.Intn(l.size)
-			index2 := rand.Intn(l.size)
-			newSolution = l.NeighboursGenerator.GetSolutionFromNeighbourhood(currentBestSolution, index1, index2)
-			newCost = CalculateCost(newSolution, l.AdjacencyMatrix)
+		for m := 0; m < l.RepeatTemperature; m++ {
+			newSolution, newCost = l.generateNewSolutionAndCost(currentBestSolution)
 
 			if newCost < currentBestCost {
 				currentBestCost = newCost
 				currentBestSolution = newSolution
 			} else {
 				random = rand.Float64()
-				probability = math.Exp(-float64(newCost-currentBestCost)/currentTemperature)
+				probability = math.Exp(-float64(newCost-currentBestCost) / currentTemperature)
 				if random < probability {
 					acceptedWorseSolutionCount = acceptedWorseSolutionCount + 1
-					temperaturesSum = temperaturesSum + (-float64(newCost-currentBestCost)/math.Log(random))
+					temperaturesSum = temperaturesSum + (-float64(newCost-currentBestCost) / math.Log(random))
 					currentBestCost = newCost
 					currentBestSolution = newSolution
 				}
 			}
 		}
 
-		fmt.Println(currentTemperature)
-		fmt.Println(acceptedWorseSolutionCount)
 		if acceptedWorseSolutionCount > 0 {
 			temperatures.Pop()
-			newTemperature := temperaturesSum/float64(acceptedWorseSolutionCount)
+			newTemperature := temperaturesSum / float64(acceptedWorseSolutionCount)
 			temperatures.Insert(newTemperature, -newTemperature)
 		}
 	}
 	return currentBestSolution, nil
+}
+
+func (l *ListBasedSimulatedAnnealing) generateNewSolutionAndCost(currentBestSolution []int) ([]int, int) {
+	index1 := rand.Intn(l.size)
+	index2 := rand.Intn(l.size)
+	newSolution := l.NeighboursGenerator.GetSolutionFromNeighbourhood(currentBestSolution, index1, index2)
+	newCost := CalculateCost(newSolution, l.AdjacencyMatrix)
+	return newSolution, newCost
+}
+
+func (l *ListBasedSimulatedAnnealing) popMaxTemperature(temperatures queue.PriorityQueue) (float64, error) {
+	var floatInterface interface{}
+	floatInterface, _ = temperatures.Pop()
+	reflected := reflect.ValueOf(floatInterface)
+	if reflected.IsValid() {
+		currentTemperature := float64(reflected.Float())
+		return currentTemperature, nil
+	} else {
+		return 0.0, errors.New("Could not read from queue!")
+	}
 }
 
 func (l ListBasedSimulatedAnnealing) setInitialTemperatureList(initialSolution []int) queue.PriorityQueue {
@@ -96,10 +109,12 @@ func (l ListBasedSimulatedAnnealing) setInitialTemperatureList(initialSolution [
     temperaturesQueue := queue.New()
     currentBestSolution := initialSolution
     currentBestCost := CalculateCost(currentBestSolution, l.AdjacencyMatrix)
-	listLength := 500
+	if l.ListLength == 0 {
+		l.ListLength = 150
+	}
 	initialProbability := 0.9
 
-	for i:=0; i<listLength; i++ {
+	for i:=0; i<l.ListLength; i++ {
 		index1 := rand.Intn(l.size)
 		index2 := rand.Intn(l.size)
 		newSolution = l.NeighboursGenerator.GetSolutionFromNeighbourhood(currentBestSolution, index1, index2)

@@ -57,7 +57,6 @@ func (i Insert) GetSolutionFromNeighbourhood(solution []int, index1 int, index2 
 	newSolution[index1] = solution[index2]
 	copy(newSolution[index1+1:index2+1], solution[index1:index2])
 	copy(newSolution[index2+1:len(solution)], solution[index2+1:])
-
 	copy(solution, newSolution)
 	return newSolution
 }

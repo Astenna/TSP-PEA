@@ -28,7 +28,7 @@ func LoadAdjacencyMatrixFromFile(fileName string) ([][]int, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return [][]int{}, errors.New("Could not open file")
-	}
+}
 
 	reader := bufio.NewReader(file)
 	reader.ReadString('\n')
