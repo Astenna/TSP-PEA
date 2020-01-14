@@ -8,7 +8,7 @@ import (
 type GeneticAlgorithm struct {
 	adjacencyMatrix [][]int
 	size            int
-	bestPath        []int
+	bestPath        Individual
 	CrossoverProbability	float64
 	MutationProbability	float64
 	MaxNumberOfGenerations int
@@ -20,7 +20,8 @@ func (g GeneticAlgorithm) Resolve(adjacencyMatrix [][]int) []int {
 	g.size = len(adjacencyMatrix[0])
 
 	initialPopulation := g.generateInitialPopulation()
-
+	g.LoopGenerations(initialPopulation)
+	return g.bestPath.path
 }
 
 func (g GeneticAlgorithm) generateInitialPopulation() []Individual {
@@ -28,12 +29,12 @@ func (g GeneticAlgorithm) generateInitialPopulation() []Individual {
 
 	for i:=0; i < g.GenerationSize; i++ {
 		individual := Individual{}
-		initialPopulation = append(initialPopulation, individual.GenerateIndividual(g.size))
+		initialPopulation[i] = individual.GenerateIndividual(g.size)
 	}
 	return initialPopulation
 }
 
-func (g GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
+func (g *GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 	var parentIndex int
 	var children []Individual
 	currentPopulation := initialPopulation
@@ -45,11 +46,14 @@ func (g GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 
 			if shouldCrossOver > g.CrossoverProbability {
 				parentIndex = rand.Intn(g.GenerationSize-1)
-				for index != parentIndex {
+				for index == parentIndex {
 					parentIndex =rand.Intn(g.GenerationSize-1)
 				}
-				newChild := currentPopulation[index].Crossover(currentPopulation[parentIndex])
-				children = append(children, newChild)
+				child1, child2 := currentPopulation[index].Crossover(g.CrossoverProbability, currentPopulation[parentIndex])
+				if len(child1.path) > 0 {
+					children = append(children, child1)
+					children = append(children, child2)
+				}
 			}
 		}
 		// MUTATE
@@ -57,7 +61,7 @@ func (g GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 			shouldMutate := rand.Float64()
 
 			if shouldMutate > g.MutationProbability {
-				currentPopulation[index] = currentPopulation[index].Mutate()
+				currentPopulation[index] = currentPopulation[index].Mutate(g.MutationProbability)
 			}
 		}
 
@@ -66,7 +70,7 @@ func (g GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 	}
 }
 
-func (g GeneticAlgorithm) nextPopulation(currentPopulation []Individual, children []Individual) []Individual{
+func (g *GeneticAlgorithm) nextPopulation(currentPopulation []Individual, children []Individual) []Individual{
 	var nextPopulation []Individual
 
 	nextPopulation = append(nextPopulation, children...)
@@ -76,11 +80,20 @@ func (g GeneticAlgorithm) nextPopulation(currentPopulation []Individual, childre
 	})
 
 	individualsThatSurviveCount := g.GenerationSize - len(children)
+	if len(g.bestPath.path) == 0 {
+		g.bestPath= currentPopulation[0]
+	} else {
+		if g.bestPath.CalculateCost(g.adjacencyMatrix) > currentPopulation[0].cost {
+			g.bestPath = currentPopulation[0]
+		}
+	}
+
+
 	nextPopulation = append(nextPopulation, currentPopulation[0:individualsThatSurviveCount]...)
 	return nextPopulation
 }
 
-func (g GeneticAlgorithm) calculateWeights(population []Individual) {
+func (g *GeneticAlgorithm) calculateWeights(population []Individual) {
 	for index := 0; index < len(population); index++ {
 		population[index].CalculateCost(g.adjacencyMatrix)
 	}

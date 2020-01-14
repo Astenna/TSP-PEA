@@ -1,4 +1,4 @@
-package slice
+package sliceExtensions
 
 // SwapLastAndIndex Swaps last and the element on the specified index
 func SwapLastAndIndex(slice []int, index int) {
