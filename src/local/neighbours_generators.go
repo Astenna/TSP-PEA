@@ -2,7 +2,7 @@ package local
 
 import (
 	"math/rand"
-	"slice"
+	"sliceExtensions"
 )
 
 type NeighboursGenerator interface {
@@ -13,7 +13,7 @@ type Swap struct {
 }
 
 func (s Swap) GetSolutionFromNeighbourhood(solution []int, index1 int, index2 int) []int {
-	slice.SwapOnIndexes(solution, index1, index2)
+	sliceExtensions.SwapOnIndexes(solution, index1, index2)
 	return solution
 }
 
@@ -29,7 +29,7 @@ func (r Reverse) GetSolutionFromNeighbourhood(solution []int, index1 int, index2
 	}
 
 	for ; index1 <= index2; index1, index2 = index1+1, index2-1 {
-		slice.SwapOnIndexes(solution, index1, index2)
+		sliceExtensions.SwapOnIndexes(solution, index1, index2)
 	}
 
 	return solution

@@ -2,7 +2,7 @@ package exact
 
 import (
 	"math"
-	"slice"
+	"sliceExtensions"
 )
 
 // BruteForce defines solution for TSP
@@ -31,9 +31,9 @@ func (b *BruteForce) FindBestPathRecursively(path []int, notVisitedNodes []int) 
 
 	if len(notVisitedNodes) > 0 {
 		for index, node := range notVisitedNodes {
-			slice.SwapLastAndIndex(notVisitedNodes, index)
+			sliceExtensions.SwapLastAndIndex(notVisitedNodes, index)
 			b.FindBestPathRecursively(append(path, node), notVisitedNodes[:len(notVisitedNodes)-1])
-			slice.SwapLastAndIndex(notVisitedNodes, index)
+			sliceExtensions.SwapLastAndIndex(notVisitedNodes, index)
 		}
 	} else {
 		cost := CalculateCost(path, b.adjacencyMatrix)

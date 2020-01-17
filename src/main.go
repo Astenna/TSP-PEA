@@ -11,11 +11,11 @@ import (
 )
 
 func main() {
-	path := "C:\\Users\\KM\\Downloads\\PEA\\TSP\\TSP\\data120.txt"
+	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data45.txt"
 	//path := "C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data10.txt"
 	adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path)
 	genetic := genetic.GeneticAlgorithm{}
-	genetic.CrossoverProbability = 0.7
+	genetic.CrossoverProbability = 0.9
 	genetic.MutationProbability = 0.15
 	genetic.GenerationSize = 200
 	genetic.MaxNumberOfGenerations = 2000

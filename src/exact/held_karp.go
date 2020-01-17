@@ -2,7 +2,7 @@ package exact
 
 import (
 	"math"
-	"slice"
+	"sliceExtensions"
 )
 
 // PartialSolution defines value stored in partialSolutions
@@ -62,9 +62,9 @@ func (h *HeldKarp) calculatePaths(nodesToVisit []int, lastSolutionKey Key) Parti
 		partialSolution, keyExists := h.partialSolutions[keyWithNewNode]
 
 		if !keyExists {
-			slice.SwapLastAndIndex(nodesToVisit, index)
+			sliceExtensions.SwapLastAndIndex(nodesToVisit, index)
 			partialSolution = h.calculatePaths(nodesToVisit[:len(nodesToVisit)-1], keyWithNewNode)
-			slice.SwapLastAndIndex(nodesToVisit, index)
+			sliceExtensions.SwapLastAndIndex(nodesToVisit, index)
 			if len(nodesToVisit) > 1 {
 				h.partialSolutions[keyWithNewNode] = partialSolution
 			}
