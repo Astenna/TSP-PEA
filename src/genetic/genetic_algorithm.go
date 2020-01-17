@@ -49,7 +49,7 @@ func (g *GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 				for index == parentIndex {
 					parentIndex =rand.Intn(g.GenerationSize-1)
 				}
-				child1, child2 := currentPopulation[index].Crossover(g.CrossoverProbability, currentPopulation[parentIndex])
+				child1, child2 := currentPopulation[index].Crossover(currentPopulation[parentIndex])
 				if len(child1.path) > 0 {
 					children = append(children, child1)
 					children = append(children, child2)
