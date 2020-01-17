@@ -11,17 +11,21 @@ import (
 )
 
 func main() {
-	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data45.txt"
-	//path := "C:\\Users\\KM\\Downloads\\PEA\\SMALL\\data10.txt"
-	adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path)
-	genetic := genetic.GeneticAlgorithm{}
-	genetic.CrossoverProbability = 0.9
-	genetic.MutationProbability = 0.15
-	genetic.GenerationSize = 200
-	genetic.MaxNumberOfGenerations = 2000
-	result := genetic.Resolve(adjacencyMatrix)
-	cost := local.CalculateCost(result, adjacencyMatrix)
-	fmt.Println(cost)
+	dataSizes := []string{"48", "53", "70","100","171", "323", "358", "403", "443"}
+	extension := ".txt"
+	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data"
+
+	for _, size := range dataSizes {
+		adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path + size + extension)
+		genetic := genetic.GeneticAlgorithm{}
+		genetic.CrossoverProbability = 0.8
+		genetic.MutationProbability = 0.03
+		genetic.GenerationSize = 100
+		genetic.MaxNumberOfGenerations = 2500
+		result := genetic.Resolve(adjacencyMatrix)
+		cost := local.CalculateCost(result, adjacencyMatrix)
+		fmt.Println("Rozmiar ", size, "	", cost)
+	}
 }
 
 func TestLocalSearchAlgorithms() {

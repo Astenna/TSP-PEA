@@ -60,11 +60,14 @@ func (g *GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 		for index:=0; index < g.GenerationSize; index++ {
 			shouldMutate := rand.Float64()
 
-			if shouldMutate > g.MutationProbability {
-				currentPopulation[index] = currentPopulation[index].Mutate(g.MutationProbability)
+			if shouldMutate < g.MutationProbability {
+				currentPopulation[index] = currentPopulation[index].Mutate()
 			}
 		}
 
+		if generationNumber == int(float64(g.MaxNumberOfGenerations)*0.8) {
+			g.MutationProbability = g.MutationProbability*2
+		}
 		currentPopulation = g.nextPopulation(currentPopulation, children)
 		children = []Individual{}
 	}

@@ -149,13 +149,10 @@ func (ind Individual) Crossover(individual Individual) (child1, child2 Individua
 	return child1, child2
 }
 
-func (ind Individual) Mutate(mutationRate float64) Individual {
-	shouldMutate := rand.Float64()
+func (ind Individual) Mutate() Individual {
 
-	if shouldMutate < mutationRate {
-		index1, index2 := ind.getTwoRandomIndexes(len(ind.path)-1)
-		sliceExtensions.SwapOnIndexes(ind.path, index1, index2)
-	}
+	index1, index2 := ind.getTwoRandomIndexes(len(ind.path)-1)
+	sliceExtensions.SwapOnIndexes(ind.path, index1, index2)
 
 	return ind
 }
