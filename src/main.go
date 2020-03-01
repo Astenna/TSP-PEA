@@ -6,25 +6,51 @@ import (
 	"genetic"
 	"local"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
+	"time"
 )
 
 func main() {
-	dataSizes := []string{"48", "53", "70","100","171", "323", "358", "403", "443"}
+	testGenetic()
+}
+
+func testGenetic() {
+	rand.Seed(time.Now().UnixNano())
+	dataSizes := []string{"48", "53", "70", "100", "323", "403", "443"}
+	opt := []int{14422, 6905, 38673, 36230, 1326, 2465, 2720 }
+	//maxGenerations := []int{1000, 1500, 2000, 2500, 3000}
+	//crossProbability := []float64{0.6, 0.7, 0.8, 0.85, 0.9, 0.95}
+	mutationProbability := []float64{0.009, 0.03, 0.1, 0.15, 0.2, 0.3}
+	//populationSize := []int{20, 50, 100, 150, 200, 300}
 	extension := ".txt"
 	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data"
 
-	for _, size := range dataSizes {
+	file, err := os.Create("results.csv")
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+
+	for index, size := range dataSizes {
 		adjacencyMatrix, _ := local.LoadAdjacencyMatrixFromFile(path + size + extension)
-		genetic := genetic.GeneticAlgorithm{}
-		genetic.CrossoverProbability = 0.8
-		genetic.MutationProbability = 0.03
-		genetic.GenerationSize = 100
-		genetic.MaxNumberOfGenerations = 2500
-		result := genetic.Resolve(adjacencyMatrix)
-		cost := local.CalculateCost(result, adjacencyMatrix)
-		fmt.Println("Rozmiar ", size, "	", cost)
+		file.WriteString("\n")
+		for _, max := range mutationProbability {
+			fullCost := 0
+			for i := 0; i < 100; i++ {
+				genetic := genetic.GeneticAlgorithm{}
+				genetic.CrossoverProbability = 0.8
+				genetic.MutationProbability = max
+				genetic.GenerationSize = 100
+				genetic.MaxNumberOfGenerations = 2500
+				result := genetic.Resolve(adjacencyMatrix)
+				cost := local.CalculateCost(result, adjacencyMatrix)
+				fullCost += cost
+			}
+			//fmt.Println("Rozmiar ", size, "	", cost)
+			difference := (float64(fullCost)/float64(100)) - float64(opt[index])
+			file.WriteString(fmt.Sprint(float64(fullCost)/float64(100)) + ";" + fmt.Sprint(difference/float64(opt[index])) + ";")
+		}
 	}
 }
 
