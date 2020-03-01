@@ -1,6 +1,6 @@
 # Travelling Salesman Problem
 
-This project was developed during my fifth term of Computer Science studies on Wroclaw University of Science and Technology. During this course we implemented many different algorithms solving the travelling salesman problem.This was my first attempt to use Golang instead of C++. It was hard at the beginning but certainly worth it! :)
+This project was developed during my fifth term of Computer Science studies on the Wroclaw University of Science and Technology. During this course we implemented different algorithms solving the travelling salesman problem. This was my first attempt to use Golang instead of C++. It was hard at the beginning but certainly worth it! :)
 
 # Implemented algorithms
 
