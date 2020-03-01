@@ -4,8 +4,8 @@ import (
 	"errors"
 	"math"
 	"math/rand"
-	"time"
 	"sliceExtensions"
+	"time"
 )
 
 type SimulatedAnnealing struct {

@@ -8,12 +8,13 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"sliceExtensions"
 	"strconv"
 	"time"
 )
 
 func main() {
-	TestExactAlgorithms()
+	testGenetic()
 }
 
 func testGenetic() {
@@ -44,7 +45,7 @@ func testGenetic() {
 				genetic.GenerationSize = 100
 				genetic.MaxNumberOfGenerations = 2500
 				result := genetic.Resolve(adjacencyMatrix)
-				cost := local.CalculateCost(result, adjacencyMatrix)
+				cost := sliceExtensions.CalculateCost(adjacencyMatrix, result)
 				fullCost += cost
 			}
 			//fmt.Println("Rozmiar ", size, "	", cost)
@@ -78,7 +79,7 @@ func TestLocalSearchAlgorithms() {
 			sum := 0
 			for i := 0; i < 100; i++ {
 				solution2, _ := simpleAnnealing.Resolve(10000, 0.999, temperature)
-				sum += local.CalculateCost(solution2, adjacencyMatrix)
+				sum += sliceExtensions.CalculateCost(adjacencyMatrix, solution2)
 			}
 			file.WriteString(size + ";0.999;" + fmt.Sprintf("%f", temperature) + ";" + strconv.Itoa(sum/100) + "\n")
 		}
