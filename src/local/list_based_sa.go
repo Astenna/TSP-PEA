@@ -6,6 +6,7 @@ import (
 	"math"
 	"math/rand"
 	"reflect"
+	"sliceExtensions"
 )
 
 type ListBasedSimulatedAnnealing struct {
@@ -39,7 +40,7 @@ func (l *ListBasedSimulatedAnnealing) Resolve(steps int) ([]int, error){
 	l.size = len(l.AdjacencyMatrix[0])
 	solution := l.createInitialSolution()
 	currentBestSolution := solution
-	currentBestCost := CalculateCost(solution, l.AdjacencyMatrix)
+	currentBestCost := sliceExtensions.CalculateCost(l.AdjacencyMatrix, solution)
 	temperatures := l.setInitialTemperatureList(solution)
 
 	var currentTemperature float64
@@ -86,7 +87,7 @@ func (l *ListBasedSimulatedAnnealing) generateNewSolutionAndCost(currentBestSolu
 	index1 := rand.Intn(l.size)
 	index2 := rand.Intn(l.size)
 	newSolution := l.NeighboursGenerator.GetSolutionFromNeighbourhood(currentBestSolution, index1, index2)
-	newCost := CalculateCost(newSolution, l.AdjacencyMatrix)
+	newCost := sliceExtensions.CalculateCost(l.AdjacencyMatrix, newSolution)
 	return newSolution, newCost
 }
 
@@ -108,7 +109,7 @@ func (l ListBasedSimulatedAnnealing) setInitialTemperatureList(initialSolution [
     var newTemperature float64
     temperaturesQueue := queue.New()
     currentBestSolution := initialSolution
-    currentBestCost := CalculateCost(currentBestSolution, l.AdjacencyMatrix)
+    currentBestCost := sliceExtensions.CalculateCost(l.AdjacencyMatrix, currentBestSolution)
 	if l.ListLength == 0 {
 		l.ListLength = 150
 	}
@@ -118,7 +119,7 @@ func (l ListBasedSimulatedAnnealing) setInitialTemperatureList(initialSolution [
 		index1 := rand.Intn(l.size)
 		index2 := rand.Intn(l.size)
 		newSolution = l.NeighboursGenerator.GetSolutionFromNeighbourhood(currentBestSolution, index1, index2)
-		newCost = CalculateCost(newSolution, l.AdjacencyMatrix)
+		newCost = sliceExtensions.CalculateCost(l.AdjacencyMatrix, newSolution)
 
 		if newCost < currentBestCost {
 			currentBestCost = newCost

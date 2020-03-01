@@ -3,8 +3,8 @@ package exact
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"os"
+	"sliceExtensions"
 	"strconv"
 	"strings"
 	"time"
@@ -57,7 +57,6 @@ func (t *TravellingSalesmanProblem) LoadDataFromFile(fileName string) ([][]int, 
 	}
 
 	defer file.Close()
-	fmt.Println(t.AdjacencyMatrix)
 	return t.AdjacencyMatrix, nil
 }
 
@@ -67,16 +66,5 @@ func (t *TravellingSalesmanProblem) Resolve() {
 	t.Solution = t.Algorithm.Resolve(t.AdjacencyMatrix)
 	endTime := time.Now()
 	t.CalculationTime = endTime.Sub(startTime)
-	t.MinimumCost = t.GetCost()
-}
-
-func (t *TravellingSalesmanProblem) GetCost() int {
-	var result int
-	last := t.Solution[0]
-	for _, node := range t.Solution[1:] {
-		result = result + t.AdjacencyMatrix[last][node]
-		last = node
-	}
-	result = result + t.AdjacencyMatrix[t.Solution[len(t.Solution)-1]][t.Solution[0]]
-	return result
+	t.MinimumCost = sliceExtensions.CalculateCost(t.AdjacencyMatrix, t.Solution)
 }

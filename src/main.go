@@ -13,11 +13,12 @@ import (
 )
 
 func main() {
-	testGenetic()
+	TestExactAlgorithms()
 }
 
 func testGenetic() {
 	rand.Seed(time.Now().UnixNano())
+	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data"
 	dataSizes := []string{"48", "53", "70", "100", "323", "403", "443"}
 	opt := []int{14422, 6905, 38673, 36230, 1326, 2465, 2720 }
 	//maxGenerations := []int{1000, 1500, 2000, 2500, 3000}
@@ -25,7 +26,6 @@ func testGenetic() {
 	mutationProbability := []float64{0.009, 0.03, 0.1, 0.15, 0.2, 0.3}
 	//populationSize := []int{20, 50, 100, 150, 200, 300}
 	extension := ".txt"
-	path := "C:\\Users\\KM\\Downloads\\PEA\\ATSP\\ATSP\\data"
 
 	file, err := os.Create("results.csv")
 	if err != nil {
@@ -93,7 +93,7 @@ func TestExactAlgorithms() {
 	csvExtension := ".csv"
 	pathToDirectory := "C:\\Users\\KM\\Downloads\\PEA\\SMALL\\"
 	baseName := "data"
-	extenstion := ".txt"
+	extension := ".txt"
 
 	for index, algorithm := range algorithmsSlice {
 		instance.Algorithm = algorithm
@@ -103,7 +103,7 @@ func TestExactAlgorithms() {
 		}
 		fmt.Println("============================= " + algorithmNames[index] + " =============================")
 		for _, size := range dataSizes {
-			fullPath := pathToDirectory + baseName + size + extenstion
+			fullPath := pathToDirectory + baseName + size + extension
 			instance.LoadDataFromFile(fullPath)
 			instance.Resolve()
 			file.WriteString(size + ";" + strconv.FormatInt(instance.CalculationTime.Microseconds(), 10) + "\n")

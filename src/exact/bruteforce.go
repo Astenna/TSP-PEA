@@ -36,7 +36,7 @@ func (b *BruteForce) FindBestPathRecursively(path []int, notVisitedNodes []int) 
 			sliceExtensions.SwapLastAndIndex(notVisitedNodes, index)
 		}
 	} else {
-		cost := CalculateCost(path, b.adjacencyMatrix)
+		cost := sliceExtensions.CalculateCost(b.adjacencyMatrix, path)
 		if cost < b.minimumCost {
 			b.bestPath = make([]int, len(path))
 			copy(b.bestPath, path)

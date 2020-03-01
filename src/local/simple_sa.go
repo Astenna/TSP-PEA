@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"time"
+	"sliceExtensions"
 )
 
 type SimulatedAnnealing struct {
@@ -32,7 +33,7 @@ func (l *SimulatedAnnealing) Resolve(steps int, temperatureStep float64, initial
 	l.size = len(l.AdjacencyMatrix[0])
 	solution := l.createInitialSolution()
 	currentBestSolution := solution
-	currentBestCost := CalculateCost(solution, l.AdjacencyMatrix)
+	currentBestCost := sliceExtensions.CalculateCost(l.AdjacencyMatrix, solution)
 	currentTemperature := initialTemperature
 
 	var random float64
@@ -45,7 +46,7 @@ func (l *SimulatedAnnealing) Resolve(steps int, temperatureStep float64, initial
 		index1 := rand.Intn(l.size)
 		index2 := rand.Intn(l.size)
 		newSolution = l.NeighboursGenerator.GetSolutionFromNeighbourhood(currentBestSolution, index1, index2)
-		newCost = CalculateCost(newSolution, l.AdjacencyMatrix)
+		newCost = sliceExtensions.CalculateCost(l.AdjacencyMatrix, newSolution)
 
 			if newCost < currentBestCost {
 				currentBestCost = newCost

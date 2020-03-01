@@ -98,12 +98,7 @@ func (h *HeldKarp) backtrackOptimalPath(lastNode int) []int {
 	return optimalPath
 }
 
-func clearBit(n int, pos int) int {
-	n &^= (1 << pos)
-	return n
-}
-
 func setBit(n int, pos int) int {
-	n |= (1 << pos)
+	n |= 1 << pos
 	return n
 }

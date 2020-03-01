@@ -25,15 +25,8 @@ func (ind Individual) GenerateIndividual(size int) Individual {
 }
 
 func (ind *Individual) CalculateCost(adjacencyMatrix [][]int) int {
-	var result int
-	last := ind.path[0]
-	for _, node := range ind.path[1:] {
-		result = result + adjacencyMatrix[last][node]
-		last = node
-	}
-	result = result + adjacencyMatrix[ind.path[len(ind.path)-1]][ind.path[0]]
-	ind.cost = result
-	return result
+	ind.cost = sliceExtensions.CalculateCost(adjacencyMatrix, ind.path)
+	return ind.cost
 }
 
 /// OX - Order Crossover Operator

@@ -3,6 +3,7 @@ package genetic
 import (
 	"math/rand"
 	"sort"
+	"time"
 )
 
 type GeneticAlgorithm struct {
@@ -16,6 +17,7 @@ type GeneticAlgorithm struct {
 }
 
 func (g GeneticAlgorithm) Resolve(adjacencyMatrix [][]int) []int {
+	rand.Seed(time.Now().UnixNano())
 	g.adjacencyMatrix = adjacencyMatrix
 	g.size = len(adjacencyMatrix[0])
 
@@ -65,6 +67,7 @@ func (g *GeneticAlgorithm) LoopGenerations(initialPopulation []Individual) {
 			}
 		}
 
+		// Double the mutation probability at the end of iterating populations
 		if generationNumber == int(float64(g.MaxNumberOfGenerations)*0.8) {
 			g.MutationProbability = g.MutationProbability*2
 		}
@@ -90,9 +93,9 @@ func (g *GeneticAlgorithm) nextPopulation(currentPopulation []Individual, childr
 			g.bestPath = currentPopulation[0]
 		}
 	}
-
-
-	nextPopulation = append(nextPopulation, currentPopulation[0:individualsThatSurviveCount]...)
+	if individualsThatSurviveCount > 0 {
+		nextPopulation = append(nextPopulation, currentPopulation[0:individualsThatSurviveCount]...)
+	}
 	return nextPopulation
 }
 

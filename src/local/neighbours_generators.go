@@ -22,7 +22,7 @@ type Reverse struct {
 
 func (r Reverse) GetSolutionFromNeighbourhood(solution []int, index1 int, index2 int) []int {
 
-	if int(index1) > int(index2) {
+	if index1 > index2 {
 		replaced := index1
 		index1 = index2
 		index2 = replaced
@@ -72,10 +72,10 @@ func (m MultipleMove) GetSolutionFromNeighbourhood(solution []int, index1 int, i
 
 	bestSolution := insertSolution
 
-	if CalculateCost(insertSolution, m.AdjacencyMatrix) > CalculateCost(reverseSolution, m.AdjacencyMatrix) {
+	if sliceExtensions.CalculateCost(m.AdjacencyMatrix, insertSolution) > sliceExtensions.CalculateCost(m.AdjacencyMatrix, reverseSolution) {
 		bestSolution = reverseSolution
 	}
-	if CalculateCost(bestSolution, m.AdjacencyMatrix) > CalculateCost(swapSolution, m.AdjacencyMatrix) {
+	if sliceExtensions.CalculateCost(m.AdjacencyMatrix, bestSolution) > sliceExtensions.CalculateCost(m.AdjacencyMatrix, swapSolution) {
 		bestSolution = swapSolution
 	}
 
